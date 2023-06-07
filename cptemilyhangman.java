@@ -27,22 +27,42 @@ public class cptemilyhangman{
 				con.setDrawColor(Color.RED);
 				con.drawString("◆ Play Game", 440, 225);
 				con.repaint();
+				//Clicking Play Game
+				if(intClick == 1){
+					
+				}
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 340 && intMouseYLoc <= 420){
 				con.setDrawColor(Color.RED);
 				con.drawString("◆ Help", 440, 325);
 				con.repaint();
+				//Clicking Help
+				if(intClick == 1){
+					
+				}
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 440 && intMouseYLoc <= 520){
 				con.setDrawColor(Color.RED);
 				con.drawString("◆ Leaderboard", 440, 425);
 				con.repaint();
+				//Clicking Leaderboard
+				if(intClick == 1){
+					
+				}
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 540 && intMouseYLoc <= 620){
 				con.setDrawColor(Color.RED);
 				con.drawString("◆ Add Theme", 440, 525);
 				con.repaint();
+				//Clicking Add Theme
+				if(intClick == 1){
+					
+				}
 			}else if(intMouseXLoc >= 0 && intMouseXLoc <= 150 && intMouseYLoc >= 630){
 				con.setDrawColor(Color.RED);
 				con.drawString("Quit", 10, 615);
 				con.repaint();
+				//Clicking Quit
+				if(intClick == 1){
+					con.closeConsole();
+				}
 			}else{
 				con.setDrawColor(Color.WHITE);
 				con.drawString("◆ Play Game", 440, 225);
