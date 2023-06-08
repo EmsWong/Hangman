@@ -1,0 +1,16 @@
+broccoli
+cauliflower
+eggplant
+asparagus
+pepper
+cucumber
+lettuce
+zucchini
+celery
+tomato
+artichoke
+mushroom
+spinach
+potato
+carrot
+squash
