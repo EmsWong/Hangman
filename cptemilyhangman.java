@@ -14,6 +14,14 @@ public class cptemilyhangman{
 		String strThemeTxt;
 		String strWords[][];
 		int intWords;
+		//Gameplay
+		String strName;
+		String strWordToGuess;
+		int intLength;
+		int intCount;
+		String strLetter;
+		String strLetters[][];
+		TextOutputFile txtLetters = new TextOutputFile("letters.txt");
 		//Location Variables
 		boolean blnRepeat = true;
 		int intMouseXLoc = 0;
@@ -22,7 +30,7 @@ public class cptemilyhangman{
 		//Leaderboard Variables
 		String strNumofScores = "";
 		String strLeaderboard[][];
-		int intCount = 0;
+		int intCount2;
 		int intRow;
 		int intCol;
 		TextOutputFile txtScore = new TextOutputFile("leaderboard.txt");
@@ -38,16 +46,28 @@ public class cptemilyhangman{
 			intClick = con.currentMouseButton();
 			//Clicking Play Game
 			if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 240 && intMouseYLoc <= 320 && intClick == 1){
-				themes(con);
 				blnRepeat = false;
+				strName = name(con);
+				con.sleep(300);
+				themes(con);
+				headerName(con, strName);
 				con.println("Enter the theme name:");
 				strTheme = con.readLine();
 				strThemeTxt = strTheme+".txt";
 				intWords = countWords(strThemeTxt);
 				strWords = loadThemeWords(intWords, strThemeTxt);
 				strWords = sortWords(strWords, intWords);
-				printWords(strWords, intWords, con);
-				
+				strWordToGuess = strWords[0][0];
+				intLength = strWordToGuess.length();
+				for(intCount = 1; intCount <= intLength; intCount++){
+					strLetter = strWordToGuess.substring(intCount-1, intCount);
+					txtLetters.println(strLetter);
+				}
+				txtLetters.close();
+				strLetters = loadWordLetters(intLength);
+				headerGeneral(con, strName, strTheme);
+				printWords(strLetters, intLength, con);
+			
 			//Hover on Play Game
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 240 && intMouseYLoc <= 320){
 				con.setDrawColor(Color.RED);
@@ -113,9 +133,39 @@ public class cptemilyhangman{
 		con.drawString("Quit", 10, 615);
 		con.repaint();
 	}
-	//Header
-	public static void header(Console con, String strName, String strTheme){
-		
+	//Header Name Only
+	public static void headerName(Console con, String strName){
+		Font fntSans = con.loadFont("SourceSansPro-Black.ttf", 30);
+		con.setDrawFont(fntSans);
+		con.setDrawColor(Color.WHITE);
+		con.fillRect(0, 0, 1280, 60);
+		con.setDrawColor(Color.BLACK);
+		con.drawString(strName, 0, 5);
+		con.repaint();
+	}
+	//General Header
+	public static void headerGeneral(Console con, String strName, String strTheme){
+		Font fntSans = con.loadFont("SourceSansPro-Black.ttf", 30);
+		con.setDrawFont(fntSans);
+		con.setDrawColor(Color.WHITE);
+		con.fillRect(0, 0, 1280, 60);
+		con.setDrawColor(Color.BLACK);
+		con.drawString(strName, 0, 5);
+		con.drawString(strTheme, 1000, 5);
+		con.repaint();
+	}
+	//Name Screen
+	public static String name(Console con){
+		String strName;
+		Font fntSans = con.loadFont("SourceSansPro-Black.ttf", 30);
+		con.setTextFont(fntSans);
+		con.setDrawColor(new Color(10, 21, 30));
+		con.fillRect(0, 0, 1280, 720);
+		con.setDrawColor(Color.WHITE);
+		con.repaint();
+		con.println("Enter a name: ");
+		strName = con.readLine();
+		return strName;
 	}
 	//Themes Screen
 	public static void themes(Console con){
@@ -123,8 +173,9 @@ public class cptemilyhangman{
 		con.setTextFont(fntSans);
 		TextInputFile txtThemes = new TextInputFile("themes.txt");
 		String strThemes;
-		con.setDrawColor(Color.BLACK);
+		con.setDrawColor(new Color(10, 21, 30));
 		con.fillRect(0, 0, 1280, 720);
+		con.clear();
 		con.repaint();
 		con.println("\n\nWhat theme would you like to play?");
 		while(txtThemes.eof()==false){
@@ -144,7 +195,7 @@ public class cptemilyhangman{
 		txtWords.close();
 		return intLines;
 	}
-	//Assigning Random Number to Word
+	//Assigning Random Number to Words
 	public static String[][] loadThemeWords(int intCount, String strFileName){
 		String strWords[][] = new String[intCount][2];
 		TextInputFile txtWords = new TextInputFile(strFileName);
@@ -157,6 +208,20 @@ public class cptemilyhangman{
 		}
 		txtWords.close();
 		return strWords;
+	}
+	//Assigning Random Number to Letters
+	public static String[][] loadWordLetters(int intCount){
+		String strLetters[][] = new String[intCount][2];
+		TextInputFile txtLetters = new TextInputFile("letters.txt");
+		int intRow;
+		int intRand;
+		for(intRow = 0; intRow < intCount; intRow++){
+			strLetters[intRow][0] = txtLetters.readLine();
+			intRand = (int)(Math.random()*100+1);
+			strLetters[intRow][1] = Integer.toString(intRand) ;
+		}
+		txtLetters.close();
+		return strLetters;
 	}
 	//Printing Text File from Array
 	public static void printWords(String strWords[][], int intCount, Console con){
@@ -191,6 +256,8 @@ public class cptemilyhangman{
 		
 		return strWords;
 	}
-
-
+	//Loading Screen
+	public static void loadingScreen(Console con){
+		
+	}
 }
