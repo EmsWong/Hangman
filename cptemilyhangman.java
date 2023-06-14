@@ -20,8 +20,12 @@ public class cptemilyhangman{
 		String strGuess;
 		int intLength;
 		int intCount;
+		int intCount2 = 0;
+		int intCounter;
+		int intWrong = 0;
 		String strLetter;
 		String strLetters[][];
+		String strReveal;
 		TextOutputFile txtLetters = new TextOutputFile("letters.txt");
 		//Location Variables
 		boolean blnRepeat = true;
@@ -31,7 +35,6 @@ public class cptemilyhangman{
 		//Leaderboard Variables
 		String strNumofScores = "";
 		String strLeaderboard[][];
-		int intCount2;
 		int intRow;
 		int intCol;
 		TextOutputFile txtScore = new TextOutputFile("leaderboard.txt");
@@ -58,25 +61,30 @@ public class cptemilyhangman{
 				intWords = hangmantools.countWords(strThemeTxt);
 				strWords = hangmantools.loadThemeWords(intWords, strThemeTxt);
 				strWords = hangmantools.sortWords(strWords, intWords);
-				strWordToGuess = strWords[0][0];
+				strWordToGuess = strWords[intCount2][0];
+				System.out.println(strWordToGuess);
 				intLength = strWordToGuess.length();
-				hangmantools.gameplayScreen(con, intLength);
+				hangmantools.gameplayScreen(con);
+				for(intCount = 1; intCount <= intLength; intCount++){
+					strLetter = strWordToGuess.substring(intCount-1, intCount);
+					txtLetters.println(strLetter);
+				}
+				txtLetters.close();
+				strLetters = hangmantools.loadWordLetters(intLength);
 				hangmantools.headerGeneral(con, strName, strTheme);
-				con.print("\n\nGuess: ");
-				strGuess = con.readLine();
-				if(strGuess.equals(strWordToGuess)){
-					hangmantools.winScreen(con);
-				}else{
-					while(!strGuess.equals(strWordToGuess)){
-						for(intCount = 1; intCount <= intLength; intCount++){
-							strLetter = strWordToGuess.substring(intCount-1, intCount);
-							txtLetters.println(strLetter);
-						}
-						txtLetters.close();
-						strLetters = hangmantools.loadWordLetters(intLength);
-						hangmantools.headerGeneral(con, strName, strTheme);
+				hangmantools.sortWords(strLetters, intLength);
+				for(intCounter = 1; intCounter <= 6; intCounter++){
+					con.print("\n\nGuess: ");
+					strGuess = con.readLine();
+					if(strGuess.equals(strWordToGuess)){
+						hangmantools.winScreen(con);
+					}else{
+						hangmantools.letterReveal(con, strLetters, intLength, intWrong, strWordToGuess);
+						intWrong = intWrong + 1;
+						con.clear();
 					}
 				}
+				
 			//Hover on Play Game
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 240 && intMouseYLoc <= 320){
 				con.setDrawColor(Color.RED);
@@ -85,6 +93,7 @@ public class cptemilyhangman{
 			//Clicking Help
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 340 && intMouseYLoc <= 420 && intClick == 1){
 				blnRepeat = false;
+				hangmantools.helpScreen(con);
 			//Hover on Help
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 340 && intMouseYLoc <= 420){
 				con.setDrawColor(Color.RED);
@@ -101,6 +110,7 @@ public class cptemilyhangman{
 			//Clicking Add Theme
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 540 && intMouseYLoc <= 620 && intClick == 1){
 				blnRepeat = false;
+				hangmantools.addTheme(con);
 			//Hover on Add Theme
 			}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 540 && intMouseYLoc <= 620){
 				con.setDrawColor(Color.RED);
