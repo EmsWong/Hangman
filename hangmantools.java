@@ -99,23 +99,33 @@ public class hangmantools{
 	}
 	//Assigning Random Number to Letters
 	public static String[][] loadWordLetters(int intCount){
-		String strLetters[][] = new String[intCount][2];
+		String strLetters[][] = new String[intCount][3];
 		TextInputFile txtLetters = new TextInputFile("letters.txt");
 		int intRow;
 		int intRand;
+		int intLoc = 550;
 		for(intRow = 0; intRow < intCount; intRow++){
 			strLetters[intRow][0] = txtLetters.readLine();
 			intRand = (int)(Math.random()*100+1);
-			strLetters[intRow][1] = Integer.toString(intRand) ;
+			strLetters[intRow][1] = Integer.toString(intRand);
+			strLetters[intRow][2] = Integer.toString(intRand);
+			intLoc = intLoc + 65;
 		}
 		txtLetters.close();
 		return strLetters;
 	}
 	//Printing Text File from Array
 	public static void printWords(String strWords[][], int intCount, Console con){
+		Font fntSans = con.loadFont("CamingoCode-Bold.ttf", 30);
+		con.setTextFont(fntSans);
+		con.setDrawColor(new Color(10, 21, 30));
+		con.fillRect(0, 0, 1280, 720);
+		con.repaint();
+		con.clear();
 		int intRow;
 		for(intRow = 0; intRow < intCount; intRow++){
-			con.print((strWords[intRow][0] + ":                                    ").substring(0,15));
+			con.print("                            ");
+			con.print((strWords[intRow][0] + ":                                    ").substring(0,16));
 			con.print((strWords[intRow][1] + "                                     ").substring(0,20));
 			con.println("");
 		}
@@ -172,6 +182,10 @@ public class hangmantools{
 	}
 	//Winning Screen
 	public static void winScreen(Console con){
+		BufferedImage imgWin = con.loadImage("hangmanwin.jpg");
+		con.drawImage(imgWin, 320, 200);
+		con.repaint();
+		con.sleep(6000);
 		con.setDrawColor(new Color(10, 21, 30));
 		con.fillRect(0, 0, 1280, 720);
 		con.clear();
@@ -185,9 +199,25 @@ public class hangmantools{
 		con.drawString("◆ Play Again", 440, 325);
 		con.drawString("◆ Quit", 440, 425);
 		con.repaint();
+		con.sleep(6000);
+	}
+	//Winning Play Again
+	public static boolean winPlayagain(Console con, boolean blnPlayAgain){
+		int intMouseXLoc = 0;
+		int intMouseYLoc = 0;
+		int intClick = 0;	
+		con.sleep(6000);
+		if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 240 && intMouseYLoc <= 320 && intClick == 1){
+			return blnPlayAgain; 
+		}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 240 && intMouseYLoc <= 320 && intClick == 1){
+			blnPlayAgain = false;
+			return blnPlayAgain;
+		}
+		return true;
 	}
 	//Losing Screen
 	public static void loseScreen(Console con, String strWordToGuess){
+		con.sleep(6000);
 		con.setDrawColor(new Color(10, 21, 30));
 		con.fillRect(0, 0, 1280, 720);
 		con.clear();
@@ -203,53 +233,83 @@ public class hangmantools{
 		con.drawString("◆ Play Again", 440, 400);
 		con.drawString("◆ Quit", 440, 500);
 		con.repaint();
+		con.sleep(6000);
 	}
 	//Revealing letter
-	public static int letterReveal(Console con, String strLetters[][], int intLength, int intWrong, String strWordToGuess){
+	public static void letterReveal(Console con, String strReveals[][], int intLength, int intWrong, String strWordToGuess){
 		String strReveal;
+		boolean blnReveal;
 		int intCount;
-		int intSpaces = 0;
 		int intX = 550;
 		int intRevealed = 0;
 		Font fntSans = con.loadFont("SourceSansPro-Black.ttf", 60);
 		con.setDrawFont(fntSans);
-		strReveal = strLetters[intWrong][0];
+		strReveal = strReveals[intWrong][0];
+		blnReveal = Boolean.parseBoolean(strReveals[intWrong][1]);
 		System.out.println(strReveal);
 		for(intCount = 0; intCount < intLength; intCount++){
-			if(strReveal.equals(" ")){
-				intSpaces++;
-				return intSpaces;
-			}else if(strReveal.equals(strWordToGuess.substring(intCount, intCount+1)) && intRevealed == 0){
+			if(strReveal.equals(strWordToGuess.substring(intCount, intCount+1)) && intRevealed == 0 && blnReveal == false){
 				intRevealed = intRevealed + 1;
 				con.setDrawColor(Color.WHITE);
 				con.drawString(strReveal, intX, 455);
+				blnReveal = true;
+				strReveals[intWrong][1] = Boolean.toString(blnReveal);
 				con.repaint();
-				return intSpaces;
 			}
 			intX = intX + 65;
 		}
-		System.out.println(intSpaces);
-		return intSpaces;
+	}
+	//More revealing letter
+	public static String[][] noDoubleLetter(String strLetter[][], int intLength){
+		TextOutputFile txtSort = new TextOutputFile("sortletters.txt");
+		String strSort;
+		String strReveal[][] = new String[intLength][2];;
+		int intCount;
+		for(intCount = 0; intCount < intLength; intCount++){
+			strSort = strLetter[intCount][0];
+			txtSort.println(strSort);
+		}
+		txtSort.close();
+		TextInputFile txtSorts = new TextInputFile("sortletters.txt");
+		int intRow;
+		boolean blnReveal = false;
+		for(intRow = 0; intRow < intCount; intRow++){
+			strReveal[intRow][0] = txtSorts.readLine();
+			if(strReveal.equals(" ")){
+				blnReveal = true;
+			}else{
+				blnReveal = false;
+			}
+			strReveal[intRow][1] = Boolean.toString(blnReveal);
+		}
+		txtSorts.close();
+		return strReveal;
 	}
 	//Drawing body parts
 	public static void drawWrong(Console con, int intRevealed){
 		if(intRevealed == 1){
 			con.setDrawColor(Color.WHITE);
+			con.drawOval(373, 175, 120, 120);
 			con.repaint();
 		}else if(intRevealed == 2){
 			con.setDrawColor(Color.WHITE);
+			con.drawLine(433, 295, 433, 455);
 			con.repaint();
 		}else if(intRevealed == 3){
 			con.setDrawColor(Color.WHITE);
+			con.drawLine(433, 375, 483, 355);
 			con.repaint();
 		}else if(intRevealed == 4){
 			con.setDrawColor(Color.WHITE);
+			con.drawLine(433, 375, 383, 355);
 			con.repaint();
 		}else if(intRevealed == 5){
 			con.setDrawColor(Color.WHITE);
+			con.drawLine(433, 455, 483, 555);
 			con.repaint();
 		}else if(intRevealed == 6){
 			con.setDrawColor(Color.WHITE);
+			con.drawLine(433, 455, 383, 555);
 			con.repaint();
 		}
 	}
@@ -295,5 +355,34 @@ public class hangmantools{
 				txtNewTheme.println(strWord);
 			}
 		}
+	}
+	//Leaderboard Counter
+	public static int countLeaderboard(){
+		int intCount = 0;
+		String strName;
+		int intScore;
+		TextInputFile txtLeaderboard = new TextInputFile("leaderboard.txt");
+		while(txtLeaderboard.eof()==false){
+			strName = txtLeaderboard.readLine();
+			intScore = txtLeaderboard.readInt();
+			intCount = intCount + 1;
+		}
+		txtLeaderboard.close();
+		return intCount;
+	}
+	//Leaderboard in Array
+	public static String[][] loadLeaderboard(int intCount){
+		countLeaderboard();
+		int intRow;
+		int intCol = 0;
+		TextInputFile txtLeaderboard = new TextInputFile("leaderboard.txt");
+		String strLeaderboard[][] = new String[intCount][2];
+		for(intRow = 0; intRow < intCount; intRow++){
+			strLeaderboard[intRow][0] = txtLeaderboard.readLine();
+			intCol = txtLeaderboard.readInt();
+			strLeaderboard[intRow][1] = Integer.toString(intCol);
+		}
+		txtLeaderboard.close();
+		return strLeaderboard;
 	}
 }
