@@ -155,11 +155,10 @@ public class hangmantools{
 		con.setDrawColor(Color.WHITE);
 		con.fillRect(100, 600, 400, 15);
 		con.fillRect(275, 125, 15, 475);
-		con.fillRect(275, 125, 200, 15);
-		con.fillRect(475, 125, 15, 50);
+		con.fillRect(275, 125, 150, 15);
+		con.fillRect(425, 125, 15, 50);
 		while(txtLetters.eof()==false){
 			strCheck = txtLetters.readLine();
-			System.out.println(strCheck);
 			if(strCheck.equals(" ")){
 				con.drawString("/", intX, 500);
 				con.repaint();
@@ -206,28 +205,53 @@ public class hangmantools{
 		con.repaint();
 	}
 	//Revealing letter
-	public static void letterReveal(Console con, String strLetters[][], int intLength, int intWrong, String strWordToGuess){
+	public static int letterReveal(Console con, String strLetters[][], int intLength, int intWrong, String strWordToGuess){
 		String strReveal;
 		int intCount;
+		int intSpaces = 0;
 		int intX = 550;
 		int intRevealed = 0;
 		Font fntSans = con.loadFont("SourceSansPro-Black.ttf", 60);
 		con.setDrawFont(fntSans);
 		strReveal = strLetters[intWrong][0];
-		//System.out.println(strReveal);
+		System.out.println(strReveal);
 		for(intCount = 0; intCount < intLength; intCount++){
-			if(strReveal.equals(strWordToGuess.substring(intCount, intCount+1)) && intRevealed == 0){
+			if(strReveal.equals(" ")){
+				intSpaces++;
+				return intSpaces;
+			}else if(strReveal.equals(strWordToGuess.substring(intCount, intCount+1)) && intRevealed == 0){
 				intRevealed = intRevealed + 1;
 				con.setDrawColor(Color.WHITE);
 				con.drawString(strReveal, intX, 455);
 				con.repaint();
+				return intSpaces;
 			}
 			intX = intX + 65;
 		}
+		System.out.println(intSpaces);
+		return intSpaces;
 	}
-	//
-	public static void drawWrong(Console con, int intWrong){
-		
+	//Drawing body parts
+	public static void drawWrong(Console con, int intRevealed){
+		if(intRevealed == 1){
+			con.setDrawColor(Color.WHITE);
+			con.repaint();
+		}else if(intRevealed == 2){
+			con.setDrawColor(Color.WHITE);
+			con.repaint();
+		}else if(intRevealed == 3){
+			con.setDrawColor(Color.WHITE);
+			con.repaint();
+		}else if(intRevealed == 4){
+			con.setDrawColor(Color.WHITE);
+			con.repaint();
+		}else if(intRevealed == 5){
+			con.setDrawColor(Color.WHITE);
+			con.repaint();
+		}else if(intRevealed == 6){
+			con.setDrawColor(Color.WHITE);
+			con.repaint();
+		}
 	}
 	//Help Screen
 	public static void helpScreen(Console con){
