@@ -1,0 +1,14 @@
+magenta
+purple
+burgundy
+orange
+yellow
+lavender
+turquoise
+bronze
+silver
+emerald
+crimson
+sky blue
+navy blue
+forest green

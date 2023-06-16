@@ -106,9 +106,14 @@ public class hangmantools{
 		int intLoc = 550;
 		for(intRow = 0; intRow < intCount; intRow++){
 			strLetters[intRow][0] = txtLetters.readLine();
-			intRand = (int)(Math.random()*100+1);
-			strLetters[intRow][1] = Integer.toString(intRand);
-			strLetters[intRow][2] = Integer.toString(intRand);
+			if(strLetters[intRow][0].equals(" ")){
+				strLetters[intRow][1] = Integer.toString(0);
+				strLetters[intRow][2] = Integer.toString(intLoc);
+			}else{
+				intRand = (int)(Math.random()*100+1);
+				strLetters[intRow][1] = Integer.toString(intRand);
+				strLetters[intRow][2] = Integer.toString(intLoc);
+			}
 			intLoc = intLoc + 65;
 		}
 		txtLetters.close();
@@ -130,7 +135,7 @@ public class hangmantools{
 			con.println("");
 		}
 	}
-	//Bubble Sort
+	//Bubble Sort Words
 	public static String[][] sortWords(String strWords[][], int intWords){
 		int intBelow;
 		int intCurrent;
@@ -154,6 +159,33 @@ public class hangmantools{
 		
 		return strWords;
 	}
+	//Bubble Sort Letters
+	public static String[][] sortLetters(String strWords[][], int intWords){
+		int intBelow;
+		int intCurrent;
+		int intCounter;
+		int intCounter2;
+		String strTemp;
+		for(intCounter2 = 0; intCounter2 < intWords-1; intCounter2++){
+			for(intCounter = 0; intCounter < intWords-intCounter2-1; intCounter++){
+				intBelow = Integer.parseInt(strWords[intCounter+1][1]);
+				intCurrent = Integer.parseInt(strWords[intCounter][1]);
+				if(intBelow > intCurrent){
+					strTemp = strWords[intCounter+1][0];
+					strWords[intCounter+1][0] = strWords[intCounter][0];
+					strWords[intCounter][0] = strTemp;
+					strTemp = strWords[intCounter+1][1];
+					strWords[intCounter+1][1] = strWords[intCounter][1];
+					strWords[intCounter][1] = strTemp;
+					strTemp = strWords[intCounter+1][2];
+					strWords[intCounter+1][2] = strWords[intCounter][2];
+					strWords[intCounter][2] = strTemp;
+				}
+			}
+		}
+		
+		return strWords;
+	}
 	//Hangman Screen
 	public static void gameplayScreen(Console con){
 		TextInputFile txtLetters = new TextInputFile("letters.txt");
@@ -167,6 +199,8 @@ public class hangmantools{
 		con.fillRect(275, 125, 15, 475);
 		con.fillRect(275, 125, 150, 15);
 		con.fillRect(425, 125, 15, 50);
+		Font fntSans = con.loadFont("CamingoCode-Bold.ttf", 30);
+		con.setDrawFont(fntSans);
 		while(txtLetters.eof()==false){
 			strCheck = txtLetters.readLine();
 			if(strCheck.equals(" ")){
@@ -183,9 +217,9 @@ public class hangmantools{
 	//Winning Screen
 	public static void winScreen(Console con){
 		BufferedImage imgWin = con.loadImage("hangmanwin.jpg");
-		con.drawImage(imgWin, 320, 200);
+		con.drawImage(imgWin, 350, 160);
 		con.repaint();
-		con.sleep(6000);
+		con.sleep(3000);
 		con.setDrawColor(new Color(10, 21, 30));
 		con.fillRect(0, 0, 1280, 720);
 		con.clear();
@@ -199,25 +233,13 @@ public class hangmantools{
 		con.drawString("◆ Play Again", 440, 325);
 		con.drawString("◆ Quit", 440, 425);
 		con.repaint();
-		con.sleep(6000);
-	}
-	//Winning Play Again
-	public static boolean winPlayagain(Console con, boolean blnPlayAgain){
-		int intMouseXLoc = 0;
-		int intMouseYLoc = 0;
-		int intClick = 0;	
-		con.sleep(6000);
-		if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 240 && intMouseYLoc <= 320 && intClick == 1){
-			return blnPlayAgain; 
-		}else if(intMouseXLoc >= 420 && intMouseXLoc <= 845 && intMouseYLoc >= 240 && intMouseYLoc <= 320 && intClick == 1){
-			blnPlayAgain = false;
-			return blnPlayAgain;
-		}
-		return true;
 	}
 	//Losing Screen
 	public static void loseScreen(Console con, String strWordToGuess){
-		con.sleep(6000);
+		BufferedImage imgWin = con.loadImage("hangmanlost.jpg");
+		con.drawImage(imgWin, 350, 160);
+		con.repaint();
+		con.sleep(3000);
 		con.setDrawColor(new Color(10, 21, 30));
 		con.fillRect(0, 0, 1280, 720);
 		con.clear();
@@ -228,63 +250,37 @@ public class hangmantools{
 		Font fntSans = con.loadFont("SourceSansPro-Black.ttf", 60);
 		con.setDrawFont(fntSans);
 		con.drawString("The correct word was: ", 290, 250);
-		con.drawString(strWordToGuess, 550, 300);
+		con.drawString(strWordToGuess, 525, 300);
 		con.setDrawColor(Color.WHITE);
 		con.drawString("◆ Play Again", 440, 400);
 		con.drawString("◆ Quit", 440, 500);
 		con.repaint();
-		con.sleep(6000);
 	}
 	//Revealing letter
 	public static void letterReveal(Console con, String strReveals[][], int intLength, int intWrong, String strWordToGuess){
 		String strReveal;
 		boolean blnReveal;
 		int intCount;
-		int intX = 550;
+		int intX;
+		int intA;
 		int intRevealed = 0;
 		Font fntSans = con.loadFont("SourceSansPro-Black.ttf", 60);
 		con.setDrawFont(fntSans);
 		strReveal = strReveals[intWrong][0];
-		blnReveal = Boolean.parseBoolean(strReveals[intWrong][1]);
+		intX = Integer.parseInt(strReveals[intWrong][2]);
+		intA = Integer.parseInt(strReveals[intWrong][1]);
 		System.out.println(strReveal);
+		System.out.println(intA);
 		for(intCount = 0; intCount < intLength; intCount++){
-			if(strReveal.equals(strWordToGuess.substring(intCount, intCount+1)) && intRevealed == 0 && blnReveal == false){
+			if(strReveal.equals(strWordToGuess.substring(intCount, intCount+1)) && intRevealed == 0){
 				intRevealed = intRevealed + 1;
 				con.setDrawColor(Color.WHITE);
 				con.drawString(strReveal, intX, 455);
-				blnReveal = true;
-				strReveals[intWrong][1] = Boolean.toString(blnReveal);
 				con.repaint();
 			}
-			intX = intX + 65;
 		}
 	}
-	//More revealing letter
-	public static String[][] noDoubleLetter(String strLetter[][], int intLength){
-		TextOutputFile txtSort = new TextOutputFile("sortletters.txt");
-		String strSort;
-		String strReveal[][] = new String[intLength][2];;
-		int intCount;
-		for(intCount = 0; intCount < intLength; intCount++){
-			strSort = strLetter[intCount][0];
-			txtSort.println(strSort);
-		}
-		txtSort.close();
-		TextInputFile txtSorts = new TextInputFile("sortletters.txt");
-		int intRow;
-		boolean blnReveal = false;
-		for(intRow = 0; intRow < intCount; intRow++){
-			strReveal[intRow][0] = txtSorts.readLine();
-			if(strReveal.equals(" ")){
-				blnReveal = true;
-			}else{
-				blnReveal = false;
-			}
-			strReveal[intRow][1] = Boolean.toString(blnReveal);
-		}
-		txtSorts.close();
-		return strReveal;
-	}
+	
 	//Drawing body parts
 	public static void drawWrong(Console con, int intRevealed){
 		if(intRevealed == 1){

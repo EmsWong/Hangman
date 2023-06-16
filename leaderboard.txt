@@ -1,4 +1,14 @@
-Em
+Ems
+10
+Test
+1
+marilyn
+2
+Carol
+5
+hi
 9
-f
-4
+test
+3
+r
+0
